@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <rawe.gordon.com.expandablebutton.ExpandableButton
+            android:id="@+id/red"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/expandable_button_background"
+            android:text="我是红色"
+            android:textAlignment="center"
+            app:eb_color="#ff0000"
+            android:layout_marginBottom="10dp" />
+
+        <rawe.gordon.com.expandablebutton.ExpandableButton
+            android:id="@+id/green"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/expandable_button_background"
+            android:text="我是绿色"
+            android:textAlignment="center"
+            app:eb_color="#00ff00"
+            android:layout_marginBottom="10dp"/>
+
+        <rawe.gordon.com.expandablebutton.ExpandableButton
+            android:id="@+id/blue"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/expandable_button_background"
+            android:text="我是蓝色"
+            android:textAlignment="center"
+            app:eb_color="#0000ff" />
+    </LinearLayout>
+
+
+</RelativeLayout>

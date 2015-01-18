@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExpandableButton">
+        <attr name="eb_color" format="color" />
+        <attr name="eb_exceed_margin" format="dimension" />
+    </declare-styleable>
+</resources>
