@@ -1,4 +1,4 @@
-# expandable_button 
+﻿# expandable_button 
 ###Result and effects:
 
 The final result and effects are as follows:
@@ -35,3 +35,7 @@ ExpandableButton is a class extends from the Button, because we want to use the 
 The main property are eb_color and the eb_exceed_margin: 
 1. eb_color means the color background effects used to display.
 2. the eb_exceed_margin means how much the background circle center can get out, the center coordinates are limited to the range ({-eb_exceed_margin<=x<=width+eb_exceed_margin} and {eb_exceed_margin<=y<=height+eb_exceed_margin})
+
+###Bug fix
+
+Fast double click problem: now double click is supported and the effect means cancel.

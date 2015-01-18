@@ -3,5 +3,6 @@
     <declare-styleable name="ExpandableButton">
         <attr name="eb_color" format="color" />
         <attr name="eb_exceed_margin" format="dimension" />
+        <attr name="eb_interval" format="integer" />
     </declare-styleable>
 </resources>

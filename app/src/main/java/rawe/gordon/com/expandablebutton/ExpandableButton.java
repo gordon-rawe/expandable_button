@@ -1,5 +1,6 @@
 package rawe.gordon.com.expandablebutton;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,7 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 
 /**
@@ -16,16 +17,11 @@ import android.widget.Button;
  */
 public class ExpandableButton extends Button {
 
-    private enum Speed {
-        FAST, SLOW;
-    }
-
     private int interval;
     private float exceedMargin;
     private float center_x, center_y;
     private float radius;
     private boolean visible;
-    private Speed mSpeed;
     private float max_radius, min_radius;
     private float window_width, window_height;
     private Paint paint;
@@ -39,18 +35,17 @@ public class ExpandableButton extends Button {
 
     private void init(Context context, AttributeSet attrs) {
         visible = false;
-        interval = 2500;
         center_x = 0;
         center_y = 0;
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         objectAnimator = ObjectAnimator.ofFloat(this, "radius", 0f, 0f);
-        mSpeed = Speed.SLOW;
 
         //读取配置信息
         if (attrs != null) {
             final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.ExpandableButton);
             int color = arr.getColor(R.styleable.ExpandableButton_eb_color, Color.BLACK);//后面跟的是默认值
             exceedMargin = arr.getDimension(R.styleable.ExpandableButton_eb_exceed_margin, 20);
+            interval = arr.getInteger(R.styleable.ExpandableButton_eb_interval, 2500);
             paint.setColor(color);
             arr.recycle();
         }
@@ -59,7 +54,7 @@ public class ExpandableButton extends Button {
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
-        radius = window_height < window_width ? window_height : window_width;
+        radius = window_height < window_width ? window_height / 2 : window_width / 2;
         invalidate();
     }
 
@@ -76,7 +71,7 @@ public class ExpandableButton extends Button {
         center_x = w / 2;
         center_y = h / 2;
         max_radius = w > h ? w : h;
-        min_radius = w < h ? w : h;
+        min_radius = w < h ? w / 2 : h / 2;
         invalidate();
     }
 
@@ -93,8 +88,9 @@ public class ExpandableButton extends Button {
     public void setPressed(boolean pressed) {
         super.setPressed(pressed);
         if (pressed) {
-            visible = true;
             expands();
+        } else {
+            becomeNormal();
         }
     }
 
@@ -106,25 +102,6 @@ public class ExpandableButton extends Button {
         center_y = event.getY();
         if (center_y > window_height + exceedMargin) center_y = window_height + exceedMargin;
         else if (center_y < -exceedMargin) center_y = -exceedMargin;
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-                if (!within(center_x, center_y)) {
-                    //让速度变快
-                    if (mSpeed != Speed.FAST) {
-                        mSpeed = Speed.FAST;
-                        objectAnimator.cancel();
-                        expands();
-                    }
-                }
-                invalidate();
-                break;
-            case MotionEvent.ACTION_UP:
-                visible = false;
-                becomeNormal();
-                invalidate();
-                mSpeed = Speed.SLOW;
-                break;
-        }
         return super.onTouchEvent(event);
     }
 
@@ -133,21 +110,41 @@ public class ExpandableButton extends Button {
     }
 
     public void expands() {
+        visible = true;
+        setRadius(min_radius);//this is very important！！！
         objectAnimator.setFloatValues(max_radius);
-        switch (mSpeed) {
-            case FAST:
-                objectAnimator.setDuration(interval / 5).setInterpolator(new DecelerateInterpolator(1f));
-                break;
-            case SLOW:
-                objectAnimator.setDuration(interval).setInterpolator(new DecelerateInterpolator(1f));
-                break;
-        }
+        objectAnimator.setDuration(interval).setInterpolator(new AccelerateInterpolator(1f));
         objectAnimator.start();
     }
 
     public void becomeNormal() {
-        objectAnimator.setFloatValues(min_radius);
-        objectAnimator.setDuration(interval / 100).start();
+        objectAnimator.cancel();
+        objectAnimator.setFloatValues(max_radius);
+        objectAnimator.setDuration(interval / 5);
+        objectAnimator.start();
+        objectAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                visible = false;
+                objectAnimator.setFloatValues(min_radius);
+                objectAnimator.removeAllListeners();
+                objectAnimator.setDuration(interval / 100).start();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
     }
 
     @Override
